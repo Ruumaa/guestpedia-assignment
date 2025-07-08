@@ -1,103 +1,175 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useDroppable,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import React, { useState } from 'react';
+import { CSS } from '@dnd-kit/utilities';
+
+const initialColumns = [
+  {
+    name: 'todo',
+    items: [
+      { id: '1', priority: 0, title: 'Company website redesign.' },
+      { id: '2', priority: 0, title: 'AI Chat Bot.' },
+    ],
+  },
+  {
+    name: 'in-progress',
+    items: [{ id: '3', priority: 0, title: 'AI Assistant' }],
+  },
+  {
+    name: 'done',
+    items: [{ id: '4', priority: 0, title: 'Design landing page' }],
+  },
+];
+
+interface ItemType {
+  id: string;
+  priority: number;
+  title: string;
+}
+
+interface ColumnType {
+  name: string;
+  items: ItemType[];
+}
+
+const TrelloBoard = () => {
+  const [columns, setColumns] = useState<ColumnType[]>(initialColumns);
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    const fromColumnIndex = columns.findIndex((col) =>
+      col.items.some((item) => item.id === activeId)
+    );
+    const toColumnIndex = columns.findIndex(
+      (col) =>
+        col.name === overId || col.items.some((item) => item.id === overId)
+    );
+
+    if (fromColumnIndex === -1 || toColumnIndex === -1) return;
+
+    const fromColumn = columns[fromColumnIndex];
+    const toColumn = columns[toColumnIndex];
+
+    const activeItem = fromColumn.items.find((item) => item.id === activeId);
+    if (!activeItem) return;
+
+    const newFromItems = fromColumn.items.filter(
+      (item) => item.id !== activeId
+    );
+    const newToItems = [...toColumn.items];
+
+    const overItemIndex = newToItems.findIndex((item) => item.id === overId);
+    const insertAt = overItemIndex >= 0 ? overItemIndex : newToItems.length;
+
+    newToItems.splice(insertAt, 0, activeItem);
+
+    const updatedColumns = [...columns];
+    updatedColumns[fromColumnIndex] = {
+      ...fromColumn,
+      items: newFromItems,
+    };
+    updatedColumns[toColumnIndex] = {
+      ...toColumn,
+      items: newToItems,
+    };
+
+    setColumns(updatedColumns);
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="flex gap-5 p-5">
+        {columns.map((col) => (
+          <Column key={col.name} column={col} />
+        ))}
+      </div>
+    </DndContext>
+  );
+};
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+const Column = ({ column }: { column: ColumnType }) => {
+  const { setNodeRef, isOver } = useDroppable({ id: column.name });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        background: isOver ? '#d3f9d8' : '#f4f4f4',
+        padding: 10,
+        width: 250,
+        borderRadius: 8,
+        minHeight: 150,
+      }}
+    >
+      <h2 style={{ marginBottom: 10 }}>{column.name.toUpperCase()}</h2>
+      <SortableContext
+        items={column.items.map((item) => `${column.name}-${item.id}`)}
+        strategy={verticalListSortingStrategy}
+      >
+        {column.items.map((item) => (
+          <SortableItem key={`${column.name}-${item.id}`} item={item} />
+        ))}
+      </SortableContext>
     </div>
   );
-}
+};
+
+const SortableItem = ({ item }: { item: ItemType }) => {
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    background: 'white',
+    padding: '10px',
+    marginBottom: '8px',
+    borderRadius: '5px',
+    opacity: isDragging ? 0.5 : 1,
+    cursor: 'grab',
+  };
+
+  return (
+    <div ref={setNodeRef} {...attributes} {...listeners} style={style}>
+      {item.title}
+    </div>
+  );
+};
+
+const Page = () => (
+  <div className="min-h-screen">
+    <TrelloBoard />
+  </div>
+);
+
+export default Page;
