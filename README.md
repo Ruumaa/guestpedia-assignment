@@ -11,7 +11,7 @@
 
    ```bash
    git clone <repository-url>
-   cd mini-kanban-app
+   cd guestpedia-assignment
    ```
 
 2. **Install dependencies**
@@ -82,8 +82,8 @@ https://mini-kanban.vercel.app/
 
 ### Timi Limitations
 
-Due to my final week of campus KKNT program, I had limited time to complete all planned features. The main areas that need improvement is task modal and
+While a 7-day timeline is generally sufficient for completing this project, I faced some unforeseen commitments that limited my focus and development time. As a result, certain parts of the application—particularly in terms of polish and UX—did not reach the level of quality I initially aimed for.
 
 ## Improvement
 
-After completing my KKNT program, I'll have full-time availability to enhance this application. Priority improvements include task modal
+With additional time, my main priority would be to improve the Task Modal component, focusing on better user interaction, cleaner structure, and a more seamless editing experience—closer to what’s expected in tools like Trello or Notion.
