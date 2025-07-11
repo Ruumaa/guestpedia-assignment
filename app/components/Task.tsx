@@ -1,8 +1,8 @@
-import { Priority, TaskType } from '@/types/type';
+import { TaskType } from '@/types/type';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { FaCheck, FaCheckSquare, FaGripLines } from 'react-icons/fa';
-import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import { FaCheck, FaCheckSquare } from 'react-icons/fa';
+import PriorityIcon from './PriorityIcon';
 
 interface Props {
   task: TaskType;
@@ -64,7 +64,7 @@ const Task = (props: Props) => {
           </span>
           <span className="flex items-center gap-x-1">
             {isDone && <FaCheck className="text-green-600 text-sm" />}{' '}
-            {handlePriorityIcon(task.priority)}
+            {PriorityIcon(task.priority)}
           </span>
         </div>
       </div>
@@ -73,16 +73,3 @@ const Task = (props: Props) => {
 };
 
 export default Task;
-
-const handlePriorityIcon = (priority: Priority | undefined) => {
-  switch (priority) {
-    case 'low':
-      return <IoIosArrowDown className="text-blue-400 size-5" />;
-    case 'medium':
-      return <FaGripLines className="text-yellow-400  size-4" />;
-    case 'high':
-      return <IoIosArrowUp className="text-red-400 size-5" />;
-    default:
-      return <FaCheckSquare />;
-  }
-};
