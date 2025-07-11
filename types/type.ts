@@ -1,15 +1,16 @@
 export type Id = string | number;
 
-export type Column = {
+export type ColumnType = {
   id: Id;
   title: string;
 };
 
-export type Task = {
+export type Priority = 'low' | 'medium' | 'high';
+
+export type TaskType = {
   id: Id;
   columnId: Id;
-  content: string;
-  title?: string;
-  priority?: number;
-  done?: boolean;
+  desc?: string;
+  title: string;
+  priority: Priority;
 };

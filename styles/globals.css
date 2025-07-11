@@ -4,10 +4,8 @@
   --font-montserrat: var(--font-montserrat);
   --font-inter: var(--font-inter);
   --font-roboto: var(--font-roboto);
-  --color-main: oklch(0.4731 0.0904 140.5);
-  --color-secondary: oklch(0.7678 0.1043 126.69);
   --color-background: oklch(0.4827 0.1925 259.57);
-  --color-accent: oklch(0.947 0.083 95.76);
+  --color-accent: oklch(0.9702 0 0);
 }
 
 ::-webkit-scrollbar {
@@ -19,7 +17,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-indigo-800 rounded-xl
+  @apply bg-sky-800 rounded-xl
 }
 
 .task> ::-webkit-scrollbar-thumb {
