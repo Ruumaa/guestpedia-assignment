@@ -38,6 +38,12 @@
 
    Navigate to [http://localhost:3000](http://localhost:3000) in your browser
 
+## Live Demo
+
+```
+https://mini-kanban.vercel.app/
+```
+
 ## Project Structure
 
 ```
@@ -71,3 +77,13 @@
 - **useTaskInput**: Manages task creation input states
 - **useDragAndDrop**: Encapsulates drag-and-drop logic
 - **useTaskModal**: Controls modal visibility and selected task state
+
+## Known Issues
+
+### Timi Limitations
+
+Due to my final week of campus KKNT program, I had limited time to complete all planned features. The main areas that need improvement is task modal and
+
+## Improvement
+
+After completing my KKNT program, I'll have full-time availability to enhance this application. Priority improvements include task modal
